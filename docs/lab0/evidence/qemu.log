@@ -1,0 +1,15 @@
+$ cmake --build build --target qemu
+[  8%] Built target test
+[ 21%] Built target aarch64
+[ 47%] Built target common
+[ 60%] Built target kernelx
+[ 69%] Built target driver
+[ 82%] Built target kernel8.elf
+[ 95%] Built target kernel
+[100%] Built target image
+Hello, world! (Core 0)
+Hello, world! (Core 2)
+Hello, world! (Core 1)
+Hello, world! (Core 3)
+QEMU: Terminated
+[100%] Built target qemu

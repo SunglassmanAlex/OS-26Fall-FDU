@@ -1,0 +1,19 @@
+$ gdb-multiarch --nx --batch -x docs/lab0/scripts/verify_bss.gdb
+The target architecture is set to "aarch64".
+0x0000000040000000 in ?? ()
+Breakpoint 1 at 0xffff000040001000: file /home/sunglassman/os-course/OS-26Fall-FDU/src/main.c, line 11.
+
+Thread 1 hit Breakpoint 1, main () at /home/sunglassman/os-course/OS-26Fall-FDU/src/main.c:11
+11	{
+BSS start = 0xffff00004000e000
+BSS end   = 0xffff00004000e048
+BSS bytes = 72
+Before memset: 72/72 bytes are 0xa5
+Temporary breakpoint 2 at 0xffff000040001070: file /home/sunglassman/os-course/OS-26Fall-FDU/src/main.c, line 15.
+
+Thread 1 hit Temporary breakpoint 2, main () at /home/sunglassman/os-course/OS-26Fall-FDU/src/main.c:15
+15	        smp_init();
+After memset:  72/72 bytes are 0x00
+BSS_CLEAR_CHECK: PASS
+qemu-system-aarch64: QEMU: Terminated via GDBstub
+[Inferior 1 (process 1) killed]

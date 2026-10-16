@@ -1,0 +1,15 @@
+{
+  "collected_at": "2026-10-16T09:45:07.303902+08:00",
+  "branch": "lab0-dev",
+  "base_commit": "f48e85ebe2bc4a4163ba0239b1a70d87cb94eb83",
+  "main_c_sha256": "b389a6b881dcfc853c6886c3d87217af85f18652c3f4a0e4c7713dfceec538a1",
+  "qemu_exit_code": 0,
+  "core_order": [
+    0,
+    2,
+    1,
+    3
+  ],
+  "boot_check_passed": true,
+  "exit_method": "Sent Ctrl+A, x through the pseudo-terminal after four Hello lines."
+}
