@@ -1,0 +1,64 @@
+% Compile with XeLaTeX. Concise, one-page Lab 1 report.
+\documentclass[UTF8,fontset=none,zihao=5,a4paper]{ctexart}
+\usepackage[left=22mm,right=22mm,top=18mm,bottom=18mm]{geometry}
+\usepackage{fontspec,xcolor,booktabs,tabularx}
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}[Scale=0.86]
+\setCJKmainfont{AR PL SungtiL GB}[AutoFakeBold=2]
+\setCJKsansfont{Droid Sans Fallback}[AutoFakeBold=2]
+\setCJKmonofont{AR PL SungtiL GB}
+\definecolor{ink}{HTML}{19364A}
+\ctexset{section={format=\normalsize\sffamily\bfseries\color{ink},beforeskip=8pt,afterskip=4pt}}
+\linespread{1.06}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{3pt}
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.12}
+\pagestyle{empty}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\begin{document}
+\begin{center}
+{\Large\sffamily\bfseries\color{ink}Lab 1: Memory Allocator 实验报告}\par
+\vspace{4pt}
+潘孝圆\quad 24300240128\quad 2026 年 10 月 30 日
+\end{center}
+
+本次修改 \code{src/kernel/mem.c}，实现整页分配、释放，以及按 8 字节分档的小块分配器。
+
+\section*{任务 1：接入初始化流程}
+沿用课程 Lab1 的 \code{main.c}：CPU 0 清零 BSS、初始化串口与打印服务，调用 \code{kinit()} 后才放行其他核心；各核心随后进入 \code{idle_entry()} 执行 \code{kalloc_test()}。保留原启动流程和测试代码。
+
+\section*{任务 2：整页管理}
+\code{kinit()} 将内核结束地址 \code{end} 向上按 4096 字节对齐，以 \code{P2K(PHYSTOP)} 为上界，把可用页用头插法串入空闲链表。\code{FreePage} 借用空闲页开头保存下一页地址，因此无需另行分配链表节点。
+
+\code{kalloc_page()} 摘取表头并返回该页地址，成功时将已分配页数加一，链表为空时返回 \code{NULL}；\code{kfree_page()} 将归还页插回表头并将页数减一。二者均由 \code{page_lock} 保护，保留框架提供的计数接口。
+
+\section*{任务 3：小块管理}
+支持 1～2048 字节的请求。将请求大小向上取整为 8 的倍数，按“块大小 $/8-1$”选择 256 档空闲链表之一。某档为空时通过 \code{kalloc_page()} 取得一页，在页头用 8 字节记录档位，再将剩余空间切成等大小块串入该档，最后摘取一个块返回。
+
+\code{kfree()} 通过 \code{PAGE_BASE(ptr)} 找到所属页，读取页头档位，再将小块插回对应链表；空指针直接返回。块起点和步长均为 8 的倍数，满足实验的对齐要求。小块链表由 \code{block_lock} 保护，归还的小块可复用，整页暂不退回页池，因此小块释放不减少已分配页数。
+
+\section*{并发、复杂度与取舍}
+两类共享链表分别加锁，持锁分配小块时只按 \code{block_lock} 到 \code{page_lock} 的方向嵌套。忽略锁等待，整页取还、小块回收及已有块的分配均为 $O(1)$；补页最多切出 511 个块，在固定页大小下有常数上界。\code{kinit()} 遍历可用页，仅在启动时执行。
+
+采用统一内存池便于各核心共享和复用，代价是锁竞争；每核独立内存池可降低竞争，但可能出现各核余量不均。本次先保证并发正确与块复用，尚未实现空页整体回收。
+
+\section*{测试结果}
+使用 \code{cmake --build build --target qemu} 独立启动三次，原测试与统计逻辑保持不变：
+\begin{center}
+\begin{tabular}{cccc}
+\toprule
+次数 & Total（字节） & Usage（页） & 结果 \\
+\midrule
+1 & 3665447 & 1141 & PASS \\
+2 & 3665447 & 1144 & PASS \\
+3 & 3665447 & 1142 & PASS \\
+\bottomrule
+\end{tabular}
+\end{center}
+三次最小 Usage 为 \textbf{1141 页}，位于课程 $<1400$ 页档。上述三次为报告整理阶段的辅助复测，原始日志保存在 \code{evidence/}；本人此前手动运行同样 PASS，Usage 为 1144。过程中曾漏写取页函数的解锁语句，经检查加锁与解锁配对后补齐。
+
+\section*{AI 教学与实现说明}
+使用 Codex（会话可见模型标识 GPT-6）进行教学式辅助与代码检查。我先后追问“结构体有啥用”“spinlock 是什么意思”，模型以链表取还和抢锁过程讲解，并给出关键调用示例；我根据理解手动编写、调整和运行代码。最终采用上述方案，以源码接口、对齐要求和实际 PASS 结果核对实现；本报告由工具辅助整理排版。
+\end{document}

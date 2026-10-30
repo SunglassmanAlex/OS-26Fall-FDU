@@ -1,0 +1,31 @@
+{
+  "collected_at": "2026-10-30T10:07:26.810992+08:00",
+  "mem_c_sha256": "47db819c05bb2d965940d4c7e98b09cfdd1911e867d4103534495763c35b22ae",
+  "runs": [
+    {
+      "run": 1,
+      "total": 3665447,
+      "usage": 1141,
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_seconds": 1.51
+    },
+    {
+      "run": 2,
+      "total": 3665447,
+      "usage": 1144,
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_seconds": 1.09
+    },
+    {
+      "run": 3,
+      "total": 3665447,
+      "usage": 1142,
+      "passed": true,
+      "exit_code": 0,
+      "elapsed_seconds": 1.06
+    }
+  ],
+  "source": "Report preparation: independent QEMU launches; original tests unchanged."
+}

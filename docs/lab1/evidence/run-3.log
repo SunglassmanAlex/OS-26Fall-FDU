@@ -1,0 +1,17 @@
+$ cmake --build build --target qemu
+[ 12%] Built target test
+[ 24%] Built target aarch64
+[ 48%] Built target common
+[ 64%] Built target kernelx
+[ 72%] Built target driver
+[ 84%] Built target kernel8.elf
+[ 96%] Built target kernel
+[100%] Built target image
+
+
+kalloc_test
+Total: 3665447
+Usage: 1142
+kalloc_test PASS
+QEMU: Terminated
+[100%] Built target qemu

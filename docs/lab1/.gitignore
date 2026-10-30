@@ -1,0 +1,5 @@
+.latex-build/
+*.aux
+*.out
+*.toc
+*.synctex.gz
